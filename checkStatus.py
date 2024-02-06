@@ -114,8 +114,8 @@ if __name__ == '__main__':
     # get data
     nowdt = datetime.datetime.utcnow()
 
-
-    print(colored("--------------------------------------------------", "black", on_color="on_white"))
+    if not gui:
+        print(colored("|------------------------------------------------|", "black", on_color="on_white"))
 
 
     for rw in camstati:
