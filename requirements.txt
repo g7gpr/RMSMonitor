@@ -1,2 +1,3 @@
 # requirements file for pip installs
 requests
+termcolor
