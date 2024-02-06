@@ -114,8 +114,8 @@ if __name__ == '__main__':
     # get data
     nowdt = datetime.datetime.utcnow()
 
-    print(colored("==================================================", "black", on_color="on_white"))
 
+    print(colored("--------------------------------------------------", "black", on_color="on_white"))
 
 
     for rw in camstati:
@@ -155,3 +155,5 @@ if __name__ == '__main__':
     if gui:
         tree.pack()
         root.mainloop()
+    else:
+        print(colored("==================================================", "black", on_color="on_white"))
