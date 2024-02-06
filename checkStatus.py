@@ -108,11 +108,13 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_warning', foreground=calibration_warning[0], background=calibration_warning[1])
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1])
         tree.tag_configure('normal',foreground='black', background='green')
+    else:
+        print(colored("Station Last Upload          Last Calibration", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.utcnow()
 
-    if not gui:
-        print("Station Last Upload          Last Calibration")
+
+
 
     for rw in camstati:
         if rw[1] is None or rw[1] == 'None':
