@@ -63,7 +63,7 @@ def getLast(camid, search_string,r):
 
 if __name__ == '__main__':
 
-    gui = False #sys.stdin.isatty()
+    gui = sys.stdin.isatty()
 
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
