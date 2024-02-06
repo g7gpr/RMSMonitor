@@ -109,7 +109,7 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1])
         tree.tag_configure('normal',foreground='black', background='green')
     else:
-        print(colored("Station Last Upload          Last Calibration    ", "black", on_color="on_white"))
+        print(colored("Station Last Upload          Last Calibration   ", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.utcnow()
 
