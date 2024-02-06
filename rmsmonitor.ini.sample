@@ -1,3 +1,9 @@
 [settings]
-cameras=uk0006,uk000f,uk001l
-
+cameras=au0006,au000c,au000d,au0028,au0029,au002a,au002b,au002c,au002d,au002e,au002f
+thresholds=2,3
+report_only_exception=false
+upload_warning=black,yellow
+upload_alert=white,red
+calibration_warning=black,cyan
+calibration_alert=red,cyan
+normal=black,green
