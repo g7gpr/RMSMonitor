@@ -24,7 +24,6 @@ def readConfigFile(cfgfile):
     normal = cfg['settings']['normal'].split(',')
     return camlist, thresholdlist, reportexception, upload_warning,upload_alert, calibration_warning, calibration_alert, normal
 
-
 def getLast(camid, search_string,r):
 
 
@@ -49,7 +48,6 @@ def getLast(camid, search_string,r):
 
 
     lastdt = linefound.split(">")[2].split("<")[0]
-
 
     try:
         dtval = datetime.datetime.strptime(lastdt, '%Y-%m-%d %H:%M:%S')
