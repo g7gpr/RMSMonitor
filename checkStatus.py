@@ -55,7 +55,7 @@ def getLast(camid, search_string,r):
         dtval = datetime.datetime.strptime(lastdt, '%Y-%m-%d %H:%M:%S')
     except:
         dtval = None
-    #print(f'{camid} last updated at {dtval} UT')
+
     return dtval.astimezone(datetime.timezone.utc)
 
 
