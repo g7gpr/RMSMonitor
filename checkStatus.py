@@ -63,6 +63,7 @@ if __name__ == '__main__':
 
     gui = not sys.stdin.isatty()
 
+
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
     else:
@@ -107,13 +108,13 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1])
         tree.tag_configure('normal',foreground='black', background='green')
     else:
-        print(colored("|================================================|", "black", on_color="on_white"))
-        print(colored("|Station Last Upload          Last Calibration   |", "black", on_color="on_white"))
+        print(colored("|============================================================|", "black", on_color="on_white"))
+        print(colored("|Station Last Upload                 Last Calibration        |", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.now(datetime.timezone.utc)
 
-    if not gui:
-        print(colored("|------------------------------------------------|", "black", on_color="on_white"))
+    if not False:
+        print(colored("|------------------------------------------------------------|", "black", on_color="on_white"))
 
 
     for rw in camstati:
@@ -154,4 +155,4 @@ if __name__ == '__main__':
         tree.pack()
         root.mainloop()
     else:
-        print(colored("|================================================|", "black", on_color="on_white"))
+        print(colored("|============================================================|", "black", on_color="on_white"))
