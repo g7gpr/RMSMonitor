@@ -56,7 +56,7 @@ def getLast(camid, search_string,r):
     except:
         dtval = None
     #print(f'{camid} last updated at {dtval} UT')
-    return dtval
+    return dtval.astimezone(datetime.timezone.utc)
 
 
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         print(colored("|================================================|", "black", on_color="on_white"))
         print(colored("|Station Last Upload          Last Calibration   |", "black", on_color="on_white"))
     # get data
-    nowdt = datetime.datetime.utcnow()
+    nowdt = datetime.datetime.now(datetime.timezone.utc)
 
     if not gui:
         print(colored("|------------------------------------------------|", "black", on_color="on_white"))
