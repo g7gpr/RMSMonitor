@@ -12,7 +12,7 @@ import tkinter as tk
 from termcolor import colored
 
 
-forceTerminal = True
+forceTerminal = False
 
 def readConfigFile(cfgfile):
     cfg = configparser.ConfigParser()
