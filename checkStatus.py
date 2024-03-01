@@ -54,8 +54,7 @@ def getLast(camid, search_string,r):
 
     try:
         dtval = datetime.datetime.strptime(lastdt, '%Y-%m-%d %H:%M:%S')
-        print(linefound)
-        print(dtval)
+
     except:
         dtval = None
 
@@ -90,12 +89,10 @@ if __name__ == '__main__':
             r = requests.get(baseurl)
             download_counter += 1
         lastuploaddtval = getLast(camid, 'Latest night',r)
-        print(lastuploaddtval)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
-        print(lastcalibratedtval)
         camstati.append([camid, lastuploaddtval, lastcalibratedtval])
         lastcamid = camid
-    print("Operation required {} downloads".format(download_counter))
+
     if gui:
         root = tk.Tk()
         root.title("Camera Status")
