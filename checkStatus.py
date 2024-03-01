@@ -11,6 +11,9 @@ from tkinter import ttk
 import tkinter as tk
 from termcolor import colored
 
+
+forceTerminal = True
+
 def readConfigFile(cfgfile):
     cfg = configparser.ConfigParser()
     cfg.read(cfgfile)
@@ -51,10 +54,12 @@ def getLast(camid, search_string,r):
 
     try:
         dtval = datetime.datetime.strptime(lastdt, '%Y-%m-%d %H:%M:%S')
+        print(linefound)
+        print(dtval)
     except:
         dtval = None
 
-    return dtval.astimezone(datetime.timezone.utc)
+    return dtval
 
 
 
@@ -62,7 +67,8 @@ def getLast(camid, search_string,r):
 if __name__ == '__main__':
 
     gui = not sys.stdin.isatty()
-
+    if forceTerminal:
+        gui = False
 
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
@@ -72,18 +78,24 @@ if __name__ == '__main__':
         print(f'config file {cfgfile} missing')
         sys.exit(1)
     camids, thresholdlist, reportexception, upload_warning,upload_alert, calibration_warning, calibration_alert, normal = readConfigFile(cfgfile)
-    camids.sort()
+
+    camids_sorted = sorted(camids)
     camstati = []
     lastcamid = "  "
-    for camid in camids:
+    download_counter = 0
+    for camid in camids_sorted:
         camid = camid.strip().upper()
         if camid[0:2] != lastcamid[0:2]:
             baseurl = f'https://globalmeteornetwork.org/weblog/{camid[0:2]}/index.html'
             r = requests.get(baseurl)
+            download_counter += 1
         lastuploaddtval = getLast(camid, 'Latest night',r)
+        print(lastuploaddtval)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
+        print(lastcalibratedtval)
         camstati.append([camid, lastuploaddtval, lastcalibratedtval])
         lastcamid = camid
+    print("Operation required {} downloads".format(download_counter))
     if gui:
         root = tk.Tk()
         root.title("Camera Status")
@@ -108,21 +120,35 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1])
         tree.tag_configure('normal',foreground='black', background='green')
     else:
-        print(colored("|============================================================|", "black", on_color="on_white"))
-        print(colored("|Station Last Upload                 Last Calibration        |", "black", on_color="on_white"))
+        print(colored("|=================================================|", "black", on_color="on_white"))
+        print(colored("|Station Last Upload          Last Calibration    |", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.now(datetime.timezone.utc)
 
     if not False:
-        print(colored("|------------------------------------------------------------|", "black", on_color="on_white"))
+        print(colored("|-------------------------------------------------|", "black", on_color="on_white"))
+
+    #camstati.sort()
+    #sort camstati by order of input list
+    #more pyuthonic ways to achieve this, but this is clear
+
+    camstati_original_sorting = []
+
+    for cam in camids:
+        cam = cam.strip()
+        for this_cam in camstati:
+
+            if this_cam[0].lower() == cam:
+                camstati_original_sorting.append(this_cam)
 
 
-    for rw in camstati:
+
+    for rw in camstati_original_sorting:
         if rw[1] is None or rw[1] == 'None':
             tags='error'
         else:
-            upload_age = nowdt - rw[1]
-            calibration_age = nowdt - rw[2]
+            upload_age = nowdt.astimezone(datetime.timezone.utc) - rw[1].astimezone(datetime.timezone.utc)
+            calibration_age = nowdt.astimezone(datetime.timezone.utc) - rw[2].astimezone(datetime.timezone.utc)
             #print(age)
             tags='normal'
 
@@ -141,18 +167,18 @@ if __name__ == '__main__':
                 tree.insert('', tk.END, values=rw, tags=(tags))
             else:
                 if tags == 'calibration_warning':
-                    print(colored("|{}  {}  {}|".format(rw[0],rw[1],rw[2]),calibration_warning[0], on_color="on_{}".format(calibration_warning[1])))
+                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),calibration_warning[0], on_color="on_{}".format(calibration_warning[1])))
                 elif tags == 'calibration_alert':
-                    print(colored("|{}  {}  {}|".format(rw[0],rw[1],rw[2]),calibration_alert[0], on_color="on_{}".format(calibration_alert[1])))
+                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),calibration_alert[0], on_color="on_{}".format(calibration_alert[1])))
                 elif tags == 'upload_warning':
-                    print(colored("|{}  {}  {}|".format(rw[0],rw[1],rw[2]),upload_warning[0], on_color="on_{}".format(upload_warning[1])))
+                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),upload_warning[0], on_color="on_{}".format(upload_warning[1])))
                 elif tags == 'upload_alert':
-                    print(colored("|{}  {}  {}|".format(rw[0],rw[1],rw[2]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
+                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
                 elif tags == 'normal':
-                    print(colored("|{}  {}  {}|".format(rw[0],rw[1],rw[2]),normal[0], on_color="on_{}".format(normal[1])))
+                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),normal[0], on_color="on_{}".format(normal[1])))
     # display the matrix
     if gui:
         tree.pack()
         root.mainloop()
     else:
-        print(colored("|============================================================|", "black", on_color="on_white"))
+        print(colored("|=================================================|", "black", on_color="on_white"))
