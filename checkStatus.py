@@ -68,7 +68,8 @@ if __name__ == '__main__':
     gui = not sys.stdin.isatty()
     if forceTerminal:
         gui = False
-    gui=True
+    if sys.platform == "win32":
+        gui=True
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
     else:
@@ -96,26 +97,32 @@ if __name__ == '__main__':
     if gui:
         root = tk.Tk()
         root.title("Camera Status")
+        root.iconbitmap("gmn_mNT_icon.ico")
         # workaround for ttk bug on Python 3.7
         style = ttk.Style()
         actualTheme = style.theme_use()
         style.theme_create("dummy", parent=actualTheme)
         style.theme_use("dummy")
+        style.configure("Treeview.Heading", font=("Arial Bold",12))
+       
         # create window and table
-        root.geometry('600x150')
-        tree = ttk.Treeview(root, column=("c1", "c2", "c3"), show='headings')
-        tree.column("#1", anchor=tk.CENTER)
+        root.geometry('650x150')
+        tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4"), show='headings')
+        tree.column("#1", anchor=tk.CENTER, width=100)
         tree.heading("#1", text="Cam ID")
         tree.column("#2", anchor=tk.CENTER)
         tree.heading("#2", text="Last Update")
         tree.column("#3", anchor=tk.CENTER)
         tree.heading("#3", text="Last Calibration")
+        tree.column("#4", anchor=tk.CENTER, width=100)
+        tree.heading("#4", text="Detections")
+        
     # set colour tags
-        tree.tag_configure('upload_warning',foreground=upload_warning[0], background=upload_warning[1])
-        tree.tag_configure('upload_alert',foreground=upload_alert[0], background=upload_alert[1])
-        tree.tag_configure('calibration_warning', foreground=calibration_warning[0], background=calibration_warning[1])
-        tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1])
-        tree.tag_configure('normal',foreground='black', background='green')
+        tree.tag_configure('upload_warning',foreground=upload_warning[0], background=upload_warning[1], font=("Arial Bold",12))
+        tree.tag_configure('upload_alert',foreground=upload_alert[0], background=upload_alert[1], font=("Arial Bold",12))
+        tree.tag_configure('calibration_warning', foreground=calibration_warning[0], background=calibration_warning[1], font=("Arial Bold",12))
+        tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1], font=("Arial Bold",12))
+        tree.tag_configure('normal',foreground='black', background='green', font=("Arial Bold",12))
     else:
         print(colored("|=================================================|", "black", on_color="on_white"))
         print(colored("|Station Last Upload          Last Calibration    |", "black", on_color="on_white"))
