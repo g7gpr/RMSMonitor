@@ -68,7 +68,7 @@ if __name__ == '__main__':
     gui = not sys.stdin.isatty()
     if forceTerminal:
         gui = False
-
+    gui=True
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
     else:
@@ -119,11 +119,12 @@ if __name__ == '__main__':
     else:
         print(colored("|=================================================|", "black", on_color="on_white"))
         print(colored("|Station Last Upload          Last Calibration    |", "black", on_color="on_white"))
+        print(colored("|-------------------------------------------------|", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.now(datetime.timezone.utc)
 
-    if not False:
-        print(colored("|-------------------------------------------------|", "black", on_color="on_white"))
+    #if not False:
+        
 
     #camstati.sort()
     #sort camstati by order of input list
