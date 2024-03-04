@@ -107,15 +107,13 @@ if __name__ == '__main__':
     download_counter = 0
     for camid in camids_sorted:
         camid = camid.strip().upper()
-        if camid[0:6] != lastcamid[0:6]:
+        if camid[0:2] != lastcamid[0:2]:
             baseurl = f'https://globalmeteornetwork.org/weblog/{camid[0:2]}/index.html'
-            latesturl = f'https://globalmeteornetwork.org/weblog/{camid[0:2]}/{camid}/latest/'
             r = requests.get(baseurl)
-            m = requests.get(latesturl)
             download_counter += 1
         lastuploaddtval = getLast(camid, 'Latest night',r)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
-        numMeteors = getMeteors(camid,'meteors.jpg',m)
+        numMeteors = getMeteors(camid,'meteors.jpg',r)
 
         camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors])
         lastcamid = camid
