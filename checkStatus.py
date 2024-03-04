@@ -1,6 +1,6 @@
 #!/bin/env python3
 # Copyright Mark McIntyre, 2024-
-# # Contributions from David Robinson & Chris Chad
+# # Contributions from David Rollinson & Chris Chad
 
 import requests
 import datetime
