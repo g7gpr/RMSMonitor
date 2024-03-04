@@ -1,6 +1,6 @@
 #!/bin/env python3
 # Copyright Mark McIntyre, 2024-
-#
+# # Contributions from David Robinson & Chris Chad
 
 import requests
 import datetime
@@ -61,6 +61,28 @@ def getLast(camid, search_string,r):
     return dtval
 
 
+def getMeteors(camid, search_string,m):
+
+
+    if r.status_code != 200:
+        if r.status_code == 404:
+            print(f'data for {camid} not available')
+        else:
+            print(f'error: {r.status_code}')
+        return None
+    text = m.text.splitlines()
+    linefound = None
+    for line in text:
+        if camid in line and search_string in line:
+            linefound = line
+            break
+
+    if linefound is None:
+        print(f'data for {camid} not available')
+        return None
+    meteors = linefound.split("_stack_")[2].split("_meteors")[0]
+    return meteors
+
 
 
 if __name__ == '__main__':
@@ -85,13 +107,17 @@ if __name__ == '__main__':
     download_counter = 0
     for camid in camids_sorted:
         camid = camid.strip().upper()
-        if camid[0:2] != lastcamid[0:2]:
+        if camid[0:6] != lastcamid[0:6]:
             baseurl = f'https://globalmeteornetwork.org/weblog/{camid[0:2]}/index.html'
+            latesturl = f'https://globalmeteornetwork.org/weblog/{camid[0:2]}/{camid}/latest/'
             r = requests.get(baseurl)
+            m = requests.get(latesturl)
             download_counter += 1
         lastuploaddtval = getLast(camid, 'Latest night',r)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
-        camstati.append([camid, lastuploaddtval, lastcalibratedtval])
+        numMeteors = getMeteors(camid,'meteors.jpg',m)
+
+        camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors])
         lastcamid = camid
 
     if gui:
