@@ -114,7 +114,11 @@ if __name__ == '__main__':
         lastuploaddtval = getLast(camid, 'Latest night',r)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
         numMeteors = getMeteors(camid,'meteors.jpg',r)
-
+        if gui == False:
+            if len(numMeteors) >= 3:
+                numMeteors=f"         {numMeteors}"  
+            else:
+                numMeteors=f"          {numMeteors}" 
         camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors])
         lastcamid = camid
 
@@ -130,7 +134,7 @@ if __name__ == '__main__':
         style.configure("Treeview.Heading", font=("Arial Bold",12))
        
         # create window and table
-        root.geometry('650x150')
+        root.geometry()
         tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4"), show='headings')
         tree.column("#1", anchor=tk.CENTER, width=100)
         tree.heading("#1", text="Cam ID")
@@ -148,9 +152,9 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1], font=("Arial Bold",12))
         tree.tag_configure('normal',foreground='black', background='green', font=("Arial Bold",12))
     else:
-        print(colored("|=================================================|", "black", on_color="on_white"))
-        print(colored("|Station Last Upload          Last Calibration    |", "black", on_color="on_white"))
-        print(colored("|-------------------------------------------------|", "black", on_color="on_white"))
+        print(colored("|=============================================================|", "black", on_color="on_white"))
+        print(colored("|Station Last Upload          Last Calibration     Detections |", "black", on_color="on_white"))
+        print(colored("|-------------------------------------------------------------|", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.now(datetime.timezone.utc)
 
@@ -196,18 +200,18 @@ if __name__ == '__main__':
                 tree.insert('', tk.END, values=rw, tags=(tags))
             else:
                 if tags == 'calibration_warning':
-                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),calibration_warning[0], on_color="on_{}".format(calibration_warning[1])))
+                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),calibration_warning[0], on_color="on_{}".format(calibration_warning[1])))
                 elif tags == 'calibration_alert':
-                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),calibration_alert[0], on_color="on_{}".format(calibration_alert[1])))
+                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),calibration_alert[0], on_color="on_{}".format(calibration_alert[1])))
                 elif tags == 'upload_warning':
-                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),upload_warning[0], on_color="on_{}".format(upload_warning[1])))
+                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),upload_warning[0], on_color="on_{}".format(upload_warning[1])))
                 elif tags == 'upload_alert':
-                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
+                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
                 elif tags == 'normal':
-                    print(colored("|{}  {}  {} |".format(rw[0],rw[1],rw[2]),normal[0], on_color="on_{}".format(normal[1])))
+                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),normal[0], on_color="on_{}".format(normal[1])))
     # display the matrix
     if gui:
         tree.pack()
         root.mainloop()
     else:
-        print(colored("|=================================================|", "black", on_color="on_white"))
+        print(colored("|=============================================================|", "black", on_color="on_white"))
