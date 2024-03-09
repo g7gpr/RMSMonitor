@@ -116,7 +116,7 @@ if __name__ == '__main__':
     if forceTerminal:
         gui = False
     if sys.platform == "win32":
-        gui=False
+        gui=True
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
     else:
