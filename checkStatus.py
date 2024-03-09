@@ -116,7 +116,7 @@ if __name__ == '__main__':
     if forceTerminal:
         gui = False
     if sys.platform == "win32":
-        gui=True
+        gui=False
     if len(sys.argv) > 1:
         cfgfile = sys.argv[1]
     else:
@@ -139,12 +139,19 @@ if __name__ == '__main__':
         lastuploaddtval = getLast(camid, 'Latest night',r)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
         camStatus = getStatus(camid,"Status:",r)
+        
         numMeteors = getMeteors(camid,'meteors.jpg',r)
         if gui == False:
-            if len(numMeteors) >= 3:
-                numMeteors=f"         {numMeteors}"  
+            camStatus = format(camStatus, ' <17')
+            if numMeteors == None:
+                numMeteors=f"  None    "
             else:
-                numMeteors=f"          {numMeteors}" 
+                if len(numMeteors) >= 3:
+                    numMeteors=f"   {numMeteors}    "  
+                elif len(numMeteors) == 2:
+                    numMeteors=f"    {numMeteors}    " 
+                else:
+                    numMeteors=f"     {numMeteors}    " 
         camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors, camStatus])
         lastcamid = camid
 
@@ -180,9 +187,9 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1], font=("Arial Bold",12))
         tree.tag_configure('normal',foreground='black', background='green', font=("Arial Bold",12))
     else:
-        print(colored("|=============================================================|", "black", on_color="on_white"))
-        print(colored("|Station Last Upload          Last Calibration     Detections |", "black", on_color="on_white"))
-        print(colored("|-------------------------------------------------------------|", "black", on_color="on_white"))
+        print(colored("|==============================================================================|", "black", on_color="on_white"))
+        print(colored("|Station Last Upload          Last Calibration     Detections  Status          |", "black", on_color="on_white"))
+        print(colored("|------------------------------------------------------------------------------|", "black", on_color="on_white"))
     # get data
     nowdt = datetime.datetime.now(datetime.timezone.utc)
 
@@ -228,15 +235,15 @@ if __name__ == '__main__':
                 tree.insert('', tk.END, values=rw, tags=(tags))
             else:
                 if tags == 'calibration_warning':
-                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),calibration_warning[0], on_color="on_{}".format(calibration_warning[1])))
+                    print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),calibration_warning[0], on_color="on_{}".format(calibration_warning[1])))
                 elif tags == 'calibration_alert':
-                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),calibration_alert[0], on_color="on_{}".format(calibration_alert[1])))
+                    print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),calibration_alert[0], on_color="on_{}".format(calibration_alert[1])))
                 elif tags == 'upload_warning':
-                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),upload_warning[0], on_color="on_{}".format(upload_warning[1])))
+                    print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),upload_warning[0], on_color="on_{}".format(upload_warning[1])))
                 elif tags == 'upload_alert':
-                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
+                    print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
                 elif tags == 'normal':
-                    print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),normal[0], on_color="on_{}".format(normal[1])))
+                    print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),normal[0], on_color="on_{}".format(normal[1])))
     # display the matrix
     if gui:
         tree.pack(fill="y", expand=True)
@@ -244,4 +251,4 @@ if __name__ == '__main__':
         root.mainloop()
         
     else:
-        print(colored("|=============================================================|", "black", on_color="on_white"))
+        print(colored("|===============================================================================|", "black", on_color="on_white"))
