@@ -61,7 +61,7 @@ def getLast(camid, search_string,r):
     return dtval
 
 
-def getMeteors(camid, search_string,m):
+def getMeteors(camid, search_string,r):
 
 
     if r.status_code != 200:
@@ -70,7 +70,7 @@ def getMeteors(camid, search_string,m):
         else:
             print(f'error: {r.status_code}')
         return None
-    text = m.text.splitlines()
+    text = r.text.splitlines()
     linefound = None
     for line in text:
         if camid in line and search_string in line:
@@ -83,7 +83,32 @@ def getMeteors(camid, search_string,m):
     meteors = linefound.split("_stack_")[2].split("_meteors")[0]
     return meteors
 
+def getStatus(camid, search_string,m):
 
+
+    if r.status_code != 200:
+        if r.status_code == 404:
+            print(f'data for {camid} not available')
+        else:
+            print(f'error: {r.status_code}')
+        return None
+    text = r.text.splitlines()
+    linefound = None
+    for line in text:
+        if camid in line:
+            linenum = text.index(line)
+            for j in range(linenum, linenum+10):
+                if search_string in text[j]:
+                    linefound = text[j]
+                    linenum = j
+                    break
+            break
+
+    if linefound is None:
+        print(f'data for {camid} not available')
+        return None
+    status = linefound.split("Status: ")[1].split("<")[0]
+    return status
 
 if __name__ == '__main__':
 
@@ -113,13 +138,14 @@ if __name__ == '__main__':
             download_counter += 1
         lastuploaddtval = getLast(camid, 'Latest night',r)
         lastcalibratedtval = getLast(camid, 'Latest successful recalibration',r)
+        camStatus = getStatus(camid,"Status:",r)
         numMeteors = getMeteors(camid,'meteors.jpg',r)
         if gui == False:
             if len(numMeteors) >= 3:
                 numMeteors=f"         {numMeteors}"  
             else:
                 numMeteors=f"          {numMeteors}" 
-        camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors])
+        camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors, camStatus])
         lastcamid = camid
 
     if gui:
@@ -135,7 +161,7 @@ if __name__ == '__main__':
        
         # create window and table
         root.geometry()
-        tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4"), show='headings')
+        tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4", "c5"), show='headings')
         tree.column("#1", anchor=tk.CENTER, width=100)
         tree.heading("#1", text="Cam ID")
         tree.column("#2", anchor=tk.CENTER)
@@ -144,6 +170,8 @@ if __name__ == '__main__':
         tree.heading("#3", text="Last Calibration")
         tree.column("#4", anchor=tk.CENTER, width=100)
         tree.heading("#4", text="Detections")
+        tree.column("#5", anchor=tk.CENTER)
+        tree.heading("#5", text="Status")
         
     # set colour tags
         tree.tag_configure('upload_warning',foreground=upload_warning[0], background=upload_warning[1], font=("Arial Bold",12))
@@ -211,7 +239,9 @@ if __name__ == '__main__':
                     print(colored("|{}  {}  {} {}|".format(rw[0],rw[1],rw[2],rw[3]),normal[0], on_color="on_{}".format(normal[1])))
     # display the matrix
     if gui:
-        tree.pack()
+        tree.pack(fill="y", expand=True)
+        root.geometry()
         root.mainloop()
+        
     else:
         print(colored("|=============================================================|", "black", on_color="on_white"))
