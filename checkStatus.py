@@ -25,6 +25,7 @@ def readConfigFile(cfgfile):
     calibration_warning = cfg['settings']['calibration_warning'].split(',')
     calibration_alert = cfg['settings']['calibration_alert'].split(',')
     normal = cfg['settings']['normal'].split(',')
+    
     return camlist, thresholdlist, reportexception, upload_warning,upload_alert, calibration_warning, calibration_alert, normal
 
 def getLast(camid, search_string,r):
@@ -142,16 +143,18 @@ if __name__ == '__main__':
         
         numMeteors = getMeteors(camid,'meteors.jpg',r)
         if gui == False:
-            camStatus = format(camStatus, ' <17')
+            if camStatus == None:
+                camStatus = f"Pending"
+                camStatus=format(camStatus, ' <17')
+            else:
+                if camStatus == None:
+                    camStatus = format("Pending",' <17')
+                camStatus = format(camStatus, ' <17')
             if numMeteors == None:
                 numMeteors=f"  None    "
             else:
-                if len(numMeteors) >= 3:
-                    numMeteors=f"   {numMeteors}    "  
-                elif len(numMeteors) == 2:
-                    numMeteors=f"    {numMeteors}    " 
-                else:
-                    numMeteors=f"     {numMeteors}    " 
+                numMeteors=f"{numMeteors}    "
+                numMeteors=numMeteors.rjust(10)
         camstati.append([camid, lastuploaddtval, lastcalibratedtval, numMeteors, camStatus])
         lastcamid = camid
 
@@ -176,7 +179,7 @@ if __name__ == '__main__':
         tree.column("#3", anchor=tk.CENTER)
         tree.heading("#3", text="Last Calibration")
         tree.column("#4", anchor=tk.CENTER, width=100)
-        tree.heading("#4", text="Detections")
+        tree.heading("#4", text="# Stacked")
         tree.column("#5", anchor=tk.CENTER)
         tree.heading("#5", text="Status")
         
@@ -186,10 +189,12 @@ if __name__ == '__main__':
         tree.tag_configure('calibration_warning', foreground=calibration_warning[0], background=calibration_warning[1], font=("Arial Bold",12))
         tree.tag_configure('calibration_alert', foreground=calibration_alert[0], background=calibration_alert[1], font=("Arial Bold",12))
         tree.tag_configure('normal',foreground='black', background='green', font=("Arial Bold",12))
+        tree.tag_configure('error',foreground='black', background='white', font=("Arial Bold",12))
     else:
-        print(colored("|==============================================================================|", "black", on_color="on_white"))
-        print(colored("|Station Last Upload          Last Calibration     Detections  Status          |", "black", on_color="on_white"))
-        print(colored("|------------------------------------------------------------------------------|", "black", on_color="on_white"))
+        print(colored("|===============================================================================|", "black", on_color="on_white"))
+        print(colored("|Station Last Upload          Last Calibration     # Stacked   Status           |", "black", on_color="on_white"))
+        print(colored("|-------------------------------------------------------------------------------|", "black", on_color="on_white"))
+        error = ['black','white']
     # get data
     nowdt = datetime.datetime.now(datetime.timezone.utc)
 
@@ -214,6 +219,8 @@ if __name__ == '__main__':
     for rw in camstati_original_sorting:
         if rw[1] is None or rw[1] == 'None':
             tags='error'
+            
+            
         else:
             upload_age = nowdt.astimezone(datetime.timezone.utc) - rw[1].astimezone(datetime.timezone.utc)
             calibration_age = nowdt.astimezone(datetime.timezone.utc) - rw[2].astimezone(datetime.timezone.utc)
@@ -244,6 +251,12 @@ if __name__ == '__main__':
                     print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),upload_alert[0], on_color="on_{}".format(upload_alert[1])))
                 elif tags == 'normal':
                     print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),normal[0], on_color="on_{}".format(normal[1])))
+                elif tags == 'error':
+                    for x in  range(1,3):
+                        rw[x] = "None               "
+                    
+                    print(colored("|{}  {}  {}  {}  {}|".format(rw[0],rw[1],rw[2],rw[3],rw[4]),error[0], on_color="on_{}".format(error[1])))    
+                    
     # display the matrix
     if gui:
         tree.pack(fill="y", expand=True)
